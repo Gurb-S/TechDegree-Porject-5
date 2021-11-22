@@ -31,7 +31,13 @@ const startGame = document.getElementsByClassName('btn__reset')[0];
 let phraseArray;
 let phraseDisplayed;
 /**
-* when the Start Game button is clicked remove the overlay on the screen  
+* when the Start Game button is clicked remove the overlay on the screen
+* If the text content of the 'Start Game' btn is equal to 'Play Again?'
+*   reset class for the keyboard, and enable all btns
+*   then remove left over hearts and readd all new hearts and reset missed counter
+*   then remove the old phrase and display a new one
+*   finally remove the overlay and allow user to play again
+*  
 **/
 startGame.addEventListener('click',()=>{
    
@@ -98,6 +104,7 @@ phraseArray = getRandomPhraseAsArray(phrases);
  *  every index and then prints out the li elements on the screen
  * If the text content of an li element is not a space, it is given the 
  *  class '.letter'
+ * If the text content is a space it is given the class '.space'
  * @param {array} arr - the array that stores getRandomPhrasesAsArray(phrases)
  */
 function addPhraseToDisplay(arr){
@@ -118,7 +125,9 @@ function addPhraseToDisplay(arr){
 phraseDisplayed = addPhraseToDisplay(phraseArray); 
 
 /**
- * 
+ *  `checkLetter` function 
+ * Checks if the letter clicked is a letter in the phrase
+ *  and if so gives it the class show
  * @param {event} element  - a click event from qwerty eventlistener
  * @param {array} arr - the array that holds the phrase displayed 
  * @returns 
@@ -137,6 +146,14 @@ function checkLetter(element,arr){
     return letter;
 }
 
+/**
+ * activates when there is a click in the container for id '#qwerty'
+ * if the element clicked is a btn give it the class '.chosen' and 
+ *  disable it. Then call the function checkLetter(); and pass
+ *  btnClicked and phraseArray as the arguements
+ *  then call the function loseLife(); and pass letterFound as the arguement
+ *  then call function checkWin(); with a 650ms delay to check if user won 
+ */
 qwerty.addEventListener('click',(e)=>{
     const btnClicked = e.target;
     if(btnClicked.tagName === 'BUTTON'){
@@ -148,6 +165,14 @@ qwerty.addEventListener('click',(e)=>{
     setTimeout(checkWin,650);
 });
 
+/**
+ * `loseLife` function 
+ * Checks if the value of the btn clicked is equal to 'null' and 
+ * if so remove a heart, add a placeholder for the lost heart and update 
+ * missed counter
+ * 
+ * @param {string} element - the value of that btn that was clicked 
+ */
 function loseLife(element){
     if(element === null){
         heart[0].remove();
@@ -156,6 +181,16 @@ function loseLife(element){
     }
 }
 
+/**
+ * `checkWin` function 
+ * If the number of elements with the classes '.show' and '.letter' equal
+ *  and if so changes the text content of 'Start Game' btn to 'Play Again?'
+ *  added the overlay to the html and gives it the class '.win'
+ * If the number of class '.show' and class '.letter' is not equal and 
+ * the number of misses they have is 5, change the text content of 'Start Game' btn to 'Play Again?'
+ *  added the overlay to the html and gives it the class '.lose'
+ *
+ */
 function checkWin(){
     const show = document.getElementsByClassName('show');
     const letter = document.getElementsByClassName('letter');
@@ -171,6 +206,14 @@ function checkWin(){
     }
 
 }
+
+/**
+ * `reAddHearts` function
+ * creates an img element and all atributes the orginal heart imgs have
+ * and adds it to the id '#scoreboard'
+ * @param {string} element - either 'live' or 'lose' defending on if you want
+ *                           to add a heart or add a heart placeholder 
+ */
 function reAddHearts(element){
     const img = document.createElement('img');
     img.src = `images/${element}Heart.png`;
